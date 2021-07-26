@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Dice</title>
+	<link rel="icon" href="images/dice-fire.png">
+	<style type="text/css">
+html {
+	height: 90%;
+}
+
+body {
+	text-align: center;
+	height: 90%;
+	background-color: black;
+	border: 10px outset white;
+	padding: 1em;
+}
+
+button {
+	position: relative;
+	background-color: white;
+	display: inline-block;
+	top: 100%;
+	border-radius: 1em;
+	width: 100px;
+	font-size: 20px;
+	border: 4px double white;
+	transition: background-color 1s ease;
+	transition: color .5s ease-in;
+}
+
+img#dice {
+	position: relative;
+	top: 100%;
+	height: 200px;
+	text-align: center; 
+	width: 200px;
+}
+
+#main {
+	display: inline-block;
+	position: relative;
+	height: 200px;
+	background-color: none;
+	width: 200px;
+}
+
+#background {
+	padding-top: 10px;
+	position: absolute;
+	background-color: white;
+	height: 300px;
+/*	background-image: url('images/background.png');
+	background-position: center;
+	height: 100%;
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: cover; */
+}
+
+#diceType {
+	position: relative;
+	top: 100%;
+	height: 2em;
+	text-align: center; 
+	width: 100px;
+	margin-bottom: 10px;
+	background-color: black;
+	color: white;
+	margin-top: 2px;
+}
+
+#result {
+	color: white;
+	float: left;
+	position: relative;
+	top: 320px;
+	width: 190px;
+	height: 35px;
+	padding: 10px 0px;
+	border-width: 5px;
+	border-style: solid;
+	border-color: white;
+}
+
+#add{
+	float: left;
+	position: absolute;
+	top: 425px;
+	color: white;
+	font-size: .8em;
+	padding-left: 3px;
+}
+
+#addText{
+	float: left;
+	position: absolute;
+	top: 445px;
+	color: white;
+	font-size: .8em;
+}
+
+#list{
+	float: left;
+	position: absolute;
+	top: 425px;
+	left: 70px;
+	color: white;
+	font-size: .8em;
+	padding-left: 3px;
+}
+
+
+#listText{
+	left: 73px;
+	float: left;
+	position: absolute;
+	top: 445px;
+	color: white;
+	font-size: .8em;
+}
+
+#diceList {
+	color: white;
+	position: absolute;
+	left: 250px;
+	width: 105px;
+	overflow: scroll;
+	height: 140px;
+	border: 4px solid white;
+	padding: 2px 0px;
+	padding-bottom: 10px;
+}
+
+#diceList::-webkit-scrollbar {
+  width: .5em;
+}
+ 
+#diceList::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+}
+ 
+#diceList::-webkit-scrollbar-thumb {
+  background-color: white;
+  outline: 1px solid white;
+}
+
+#clear {
+	font-size: 14px;
+	color: black;
+	position: absolute;
+	left: 256px;
+	top:180px;
+	border: 4px solid white;
+}
+
+	</style>
+</head>
+<body>
+
+<div id="background">
+<div id="main">
+	<div id="text">Dice Type</div>
+	<select id="diceType">
+		<option value="4">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;d4</option>
+		<option value="6">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;d6</option>
+		<option value="8">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;d8</option>
+	</select>
+	<img id="dice" src="images/dice-fire.png" />
+	<br />
+	<button id="roll" onclick="clicks()">Roll</button>
+</div>
+</div>
+<div id="result">
+Total:
+<div id="numRes">0</div>
+</div>
+<div id="add">
+<input id="check" type="checkbox" name="add" data-value="false">
+</div>
+<div id="addText">
+	Add
+</div>
+
+<div id="list">
+<input id="checkList" type="checkbox" name="list" data-val="false">
+</div>
+<div id="listText">
+	List
+</div>
+<div id="diceList">
+Log:<hr width="75px" />
+</div>
+<button id="clear" onclick="clearText()">Clear</button>
+
+<script src="jquery-2.2.4.min.js"></script>
+<script>
+var total = 0;
+var num = 0;
+var res = 0;
+var counter;
+var set;
+var checker=$("#diceType").val();
+var temp=$("#diceType").val();
+var addValbool = false;
+var listAddValbool = false;
+
+//Add Option
+$("#add").on("click", function() {
+var addVal = $("#check").attr("data-value");
+	if(addVal=="true") {
+		$("#check").attr("data-value", "false");
+		addValbool = false;
+		total = 0;
+	} else if(addVal=="false") {
+		$("#check").attr("data-value", "true");
+		addValbool = true;
+		var y = $("#numRes").text();
+		total = parseInt(y);
+}
+});
+
+$("#checkList").on("click", function() {
+var dataVal = $("#checkList").attr("data-val");
+	if(dataVal=="true") {
+		$("#checkList").attr("data-val", "false");
+		listAddValbool = false;
+	} else if(dataVal=="false") {
+		$("#checkList").attr("data-val", "true");
+		listAddValbool = true;
+	}	
+});
+
+$("select").mouseenter(function() {
+	temp=$("#diceType").val();
+});
+
+$("select").mouseleave(function() {
+	checker=$("#diceType").val();
+	if (checker!=temp) {
+		$("img#dice").attr("src", "images/dice-fire.png");		
+		checker=1;
+	}
+});
+
+$("button#roll,#clear").mouseover(function() {
+	$(this).css("background-color", "black");
+	$(this).css("color", "white");
+});
+$("button#roll,#clear").mouseleave(function() {
+	$(this).css("background-color", "white");
+	$(this).css("color", "black");
+});
+$("#clear").on("click", function() {
+	$(this).css("background-color", "red");
+	$(this).css("color", "black");
+});
+
+	function roll() {
+		var roll = Math.ceil(Math.random()*num);
+		var name = "images/d".concat(num, "-", roll, ".png");
+		$("#dice").attr("src", name);
+		counter++;
+		if(counter==50) {
+			clearInterval(set);
+			$("button#roll").attr("disabled", false);
+			$("button#roll").css("background-color", "black");
+			$("button#roll").css("color", "white");
+			result(roll);
+			listResult(num,roll)
+		}
+	}
+
+	function result(x) {
+			//display to result
+			if(addValbool==false) {
+				res = x;
+			} else if(addValbool==true) {
+				total = total + x;
+				res = total;
+			}
+			$("#numRes").html(res);
+	}
+
+	function listResult(type,rollNum) {
+			//display to result
+			if(listAddValbool==true) {
+				res = "d".concat(type,": ",rollNum,"<hr width='75px' color='white'>");
+				$("#diceList").append(res);
+			}
+	}	
+
+	function clicks() {
+		$("button#roll").css("background-color", "black");
+		$("button#roll").css("color", "red");
+		counter = 10;
+		num = $("#diceType").val();
+			$("button#roll").attr("disabled", true);
+			set = setInterval(roll, counter);
+	}
+
+	function clearText() {
+		$("#diceList").html("Log:<hr width='75px' />");
+	}
+
+</script>
+<footer style="color: white; position: relative; top: 110%"> Copyright &copy; 2019, Dio Kristoffer C. Yap</footer>
+</body>
+</html>
